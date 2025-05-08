@@ -51,3 +51,5 @@ const server = async () => {
         process.exit(1) //Salir del proceso con un codigo de error 1
     }
 }
+
+server()
