@@ -1,43 +1,9 @@
-import express, {urlencoded} from "express" //Importar Express
-import dotenv from "dotenv" //Importar Dotenv
-import fs from "node:fs" //Importar fs
-import cors from "cors" //Importar Cors
-import { log } from "node:console"
-
-dotenv.config() //Ejecutar dotenv
-const app = express() //Crear una instancia de express
+import app from "./app.js" //Importar la aplicación Express desde app.js;
+import connectToMongoDB from "./db.js"
 
 const PORT = process.env.PORT || 3000
 
-//Middlewares
-app.use(cors({
-    origin:"*", //Permitir todas las solicitudes de origen cruzado desde cualquier origen
-    credentials:true //Permitir el intercambio de credenciales (cookies,encabezados de autorizacioón,etc.)
-}))
-
-app.use(express.json()) //Analizar e cuerpo de la solicitud como JSON
-
-app.use(urlencoded({
-    extended:true //Analizar el cuerpo de la solicitud como URL codificada
-}))
-
-//MANEJO DE RUTAS
-//Leemos todos los archivos dentro del directorio './src/routes'  de forma sincrona
-//fsreaddyrSync devuelve un arrray con los npmbres de todos los archivos de ese directorio
-
-const routeFiles = fs.readdirSync ('./src/routes')
-
-//Iteramos sobre cada archivo encontrado en el directorio de rutas
-
-routeFiles.forEach((file)=>{
-    
-    import (`./src/routes/${file}`).then((route)=>{
-        app.use('/api/v1',route.default)
-    }).catch((err)=>{
-        console.log(`Error al cargar la ruta ${file}:`, err);
-        
-    })
-})
+connectToMongoDB() //Llamar a la función para conectar a MongoDB
 
 //Iniciar el servidor
 
@@ -53,3 +19,4 @@ const server = async () => {
 }
 
 server()
+
